@@ -20,6 +20,9 @@ public class Review
     [MaxLength(255)]
     public string MovieTitle { get; set; } = string.Empty; // Stored to avoid re-fetching from API
 
+    [MaxLength(500)]
+    public string MoviePosterPath { get; set; } = string.Empty; // TMDb poster path, stored to avoid re-fetching
+
     [Required]
     [MaxLength(1000)]
     public string ReviewText { get; set; } = string.Empty; // The review content
