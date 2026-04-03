@@ -29,5 +29,11 @@ public class AppDbContext : DbContext
             .HasOne(r => r.User)
             .WithMany(u => u.Reviews)
             .HasForeignKey(r => r.UserId);
+
+        // Seed default roles
+        modelBuilder.Entity<Role>().HasData(
+            new Role { RoleId = 1, RoleName = "Admin" },
+            new Role { RoleId = 2, RoleName = "User" }
+        );
     }
 }

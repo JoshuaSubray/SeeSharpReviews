@@ -1,1 +1,61 @@
+@model SeeSharpReviews.Models.ProfileViewModel
 
+@{
+    ViewData["Title"] = Model.Username + "'s Profile";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-0">
+    <h2>
+        @Model.Username
+        @if (Model.RoleName == "Admin")
+        {
+            <span class="badge bg-danger fs-6 align-middle ms-2">Admin</span>
+        }
+        else
+        {
+            <span class="badge bg-primary fs-6 align-middle ms-2">User</span>
+        }
+    </h2>
+    
+    @if (User.Identity?.Name == Model.Username)
+    {
+        <form asp-action="DeleteMyAccount" method="post" onsubmit="return confirm('WARNING: Are you sure you want to permanently delete your account and all your reviews? This cannot be undone.');">
+            <button type="submit" class="btn btn-outline-danger">Delete My Account</button>
+        </form>
+    }
+</div>
+<hr />
+
+@if (Model.Reviews.Any())
+{
+    <div class="row">
+        @foreach (var review in Model.Reviews)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    @if (!string.IsNullOrEmpty(review.MoviePosterPath))
+                    {
+                        <img src="https://image.tmdb.org/t/p/w300@(review.MoviePosterPath)"
+                             class="card-img-top" alt="@review.MovieTitle" />
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a asp-controller="Movie" asp-action="Details"
+                               asp-route-id="@review.MovieApiId">@review.MovieTitle</a>
+                        </h5>
+                        <p class="card-text">@review.ReviewText</p>
+                        <p class="text-warning mb-1">
+                            @for (int i = 0; i < review.Rating; i++) { <span>★</span> }
+                            @for (int i = review.Rating; i < 5; i++) { <span class="text-muted">★</span> }
+                        </p>
+                        <small class="text-muted">@review.CreatedAt.ToString("MMM dd, yyyy")</small>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p class="text-muted">No reviews yet.</p>
+}

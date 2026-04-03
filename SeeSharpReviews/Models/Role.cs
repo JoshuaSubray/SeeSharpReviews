@@ -1,7 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SeeSharpReviews.Models;
 
+[Table("SSR_ROLES")]
 public class Role
 {
     [Key]

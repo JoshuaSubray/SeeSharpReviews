@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SeeSharpReviews.Models;
 
+[Table("SSR_USERS")]
 public class User
 {
     [Key]

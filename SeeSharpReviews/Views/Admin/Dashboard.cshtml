@@ -1,0 +1,94 @@
+@model SeeSharpReviews.Models.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h2 class="text-danger fw-bold"><i class="bi bi-shield-lock"></i> Admin Dashboard</h2>
+        <p class="text-muted">Manage users, view platform statistics, and oversee content.</p>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-md-6 mb-3">
+        <div class="card bg-primary text-white shadow-sm h-100">
+            <div class="card-body text-center">
+                <h1 class="display-4 fw-bold">@Model.TotalUsers</h1>
+                <p class="fs-5 mb-0">Total Registered Users</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card bg-success text-white shadow-sm h-100">
+            <div class="card-body text-center">
+                <h1 class="display-4 fw-bold">@Model.TotalReviews</h1>
+                <p class="fs-5 mb-0">Total Written Reviews</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4 class="mb-3">User Directory</h4>
+<div class="table-responsive shadow-sm rounded">
+    <table class="table table-hover align-middle mb-0">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Username</th>
+                <th scope="col">Email</th>
+                <th scope="col">Role</th>
+                <th scope="col">Reviews</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="bg-white">
+            @foreach (var usr in Model.Users)
+            {
+                <tr>
+                    <td class="fw-bold">@usr.UserId</td>
+                    <td>
+                        <a asp-controller="Account" asp-action="Profile" asp-route-id="@usr.UserId" class="text-decoration-none">
+                            @usr.Username
+                        </a>
+                    </td>
+                    <td>@usr.Email</td>
+                    <td>
+                        @if (usr.Role.RoleName == "Admin")
+                        {
+                            <span class="badge bg-danger">Admin</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">User</span>
+                        }
+                    </td>
+                    <td>@usr.Reviews.Count</td>
+                    <td>
+                        @if (usr.Username != User.Identity?.Name)
+                        {
+                            <div class="d-flex gap-2">
+                                @if (usr.Role.RoleName != "Admin")
+                                {
+                                    <form asp-action="MakeAdmin" method="post" onsubmit="return confirm('Are you sure you want to promote @usr.Username to Admin? They will have full dashboard access.');">
+                                        <input type="hidden" name="userId" value="@usr.UserId" />
+                                        <button type="submit" class="btn btn-sm btn-outline-primary">Make Admin</button>
+                                    </form>
+                                }
+                                <form asp-action="DeleteUser" method="post" onsubmit="return confirm('DANGER: Are you sure you want to completely delete @usr.Username? This will also wipe all of their reviews permanently. This action cannot be undone.');">
+                                    <input type="hidden" name="userId" value="@usr.UserId" />
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete User</button>
+                                </form>
+                            </div>
+                        }
+                        else
+                        {
+                            <button class="btn btn-sm btn-secondary" disabled>Current Active User</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
