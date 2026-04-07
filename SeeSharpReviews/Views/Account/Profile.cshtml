@@ -20,7 +20,7 @@
     @if (User.Identity?.Name == Model.Username)
     {
         <form asp-action="DeleteMyAccount" method="post" onsubmit="return confirm('WARNING: Are you sure you want to permanently delete your account and all your reviews? This cannot be undone.');">
-            <button type="submit" class="btn btn-outline-danger">Delete My Account</button>
+            <button type="submit" class="btn account-danger-btn">Delete My Account</button>
         </form>
     }
 </div>

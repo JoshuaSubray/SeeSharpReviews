@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="~/SeeSharpReviews.styles.css" asp-append-version="true" />
 </head>
 <body class="site-body">
-    <header>
+    <header class="sticky-top site-header-sticky">
         <nav class="navbar navbar-expand-sm navbar-dark site-navbar border-0 shadow-sm mb-0">
             <div class="container-fluid px-3 px-lg-4">
                 <partial name="_BrandLogo" />
@@ -20,12 +20,12 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1 ms-lg-4 pt-2 pt-sm-0">
+                    <ul class="navbar-nav flex-grow-1 ms-lg-4 pt-2 pt-sm-0 gap-sm-2">
                         <li class="nav-item">
-                            <a class="nav-link site-nav-link" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="btn btn-sm site-menu-btn rounded-pill px-3 mt-2 mt-sm-0 align-self-center" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link site-nav-link" asp-controller="Movie" asp-action="Index">Movies</a>
+                            <a class="btn btn-sm site-menu-btn rounded-pill px-3 mt-2 mt-sm-0 align-self-center" asp-controller="Movie" asp-action="Index">Movies</a>
                         </li>
                     </ul>
                     <ul class="navbar-nav gap-sm-1">
@@ -34,26 +34,26 @@
                             if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link site-nav-link site-nav-link--accent" asp-area="" asp-controller="Admin" asp-action="Dashboard">Admin</a>
+                                    <a class="btn btn-sm site-menu-btn site-menu-btn--accent rounded-pill px-3 mt-2 mt-sm-0 align-self-center" asp-area="" asp-controller="Admin" asp-action="Dashboard">Admin</a>
                                 </li>
                             }
                             <li class="nav-item">
-                                <a class="nav-link site-nav-link" asp-area="" asp-controller="Account" asp-action="Profile">
+                                <a class="btn btn-sm site-auth-btn site-auth-btn--ghost fw-semibold rounded-pill px-3 mt-2 mt-sm-0 align-self-center" asp-area="" asp-controller="Account" asp-action="Profile">
                                     @User.Identity.Name
                                     <span class="opacity-75 small">(@(User.IsInRole("Admin") ? "Admin" : "User"))</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link site-nav-link" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
+                                <a class="btn btn-sm site-auth-btn site-auth-btn--solid fw-semibold rounded-pill px-3 ms-sm-2 mt-2 mt-sm-0 align-self-center" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link site-nav-link" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+                                <a class="btn btn-sm site-auth-btn site-auth-btn--ghost fw-semibold rounded-pill px-3 mt-2 mt-sm-0 align-self-center" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
                             </li>
                             <li class="nav-item">
-                                <a class="btn btn-sm btn-light fw-semibold rounded-pill px-3 ms-sm-1 mt-2 mt-sm-0 align-self-center" asp-area="" asp-controller="Account" asp-action="Register">Sign up</a>
+                                <a class="btn btn-sm site-auth-btn site-auth-btn--solid fw-semibold rounded-pill px-3 ms-sm-2 mt-2 mt-sm-0 align-self-center" asp-area="" asp-controller="Account" asp-action="Register">Sign up</a>
                             </li>
                         }
                     </ul>
@@ -69,7 +69,7 @@
 
     <footer class="site-footer mt-auto border-0">
         <div class="site-footer__strip"></div>
-        <div class="container py-4">
+        <div class="container py-5">
             <div class="row align-items-center g-3">
                 <div class="col-md-6 d-flex align-items-center gap-2">
                     <img src="~/images/logo-ssr.svg" width="36" height="36" alt="" class="flex-shrink-0 opacity-90" />
@@ -85,6 +85,9 @@
                     </small>
                     <small class="text-white-50 d-block mt-1">
                         This product uses the TMDb API but is not endorsed or certified by TMDb.
+                    </small>
+                    <small class="text-white-50 d-block mt-1">
+                        &copy; 2026 SeeSharpReviews. All rights reserved.
                     </small>
                 </div>
             </div>

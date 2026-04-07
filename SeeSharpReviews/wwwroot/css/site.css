@@ -49,8 +49,12 @@ html {
 /* Nav */
 .site-navbar {
   background: linear-gradient(110deg, #4c1d95 0%, #7c3aed 38%, #c026d3 72%, #db2777 100%) !important;
-  padding-top: 0.65rem;
-  padding-bottom: 0.65rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.site-header-sticky {
+  z-index: 1030;
 }
 
 .site-nav-link {
@@ -69,6 +73,71 @@ html {
 .site-nav-link--accent {
   color: #fde68a !important;
   font-weight: 700;
+}
+
+.site-menu-btn {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.25rem;
+  line-height: 1;
+  font-size: 0.98rem;
+  color: rgba(255, 255, 255, 0.92) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid transparent !important;
+  font-weight: 500;
+}
+
+.site-menu-btn:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.16) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.site-menu-btn--accent {
+  color: #fde68a !important;
+  border-color: rgba(253, 230, 138, 0.55) !important;
+}
+
+.site-auth-btn {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-width: 88px;
+  min-height: 2.25rem;
+  line-height: 1;
+  font-size: 0.98rem;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.site-auth-btn:hover {
+  transform: translateY(-1px);
+}
+
+.site-auth-btn--ghost {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.55) !important;
+}
+
+.site-auth-btn--ghost:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.18) !important;
+  border-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.site-auth-btn--solid {
+  color: var(--ssr-footer) !important;
+  background: #fff !important;
+  border: 1px solid #fff !important;
+  box-shadow: 0 4px 14px rgba(30, 27, 75, 0.22);
+}
+
+.site-auth-btn--solid:hover {
+  color: #fff !important;
+  background: var(--ssr-footer) !important;
+  border-color: rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 0 6px 16px rgba(30, 27, 75, 0.28);
 }
 
 .brand-logo__text {
@@ -102,6 +171,45 @@ html {
 .site-footer__strip {
   height: 5px;
   background: linear-gradient(90deg, #f472b6, #a78bfa, #22d3ee, #fbbf24);
+}
+
+/* Account pages */
+.account-submit-btn {
+  color: #fff !important;
+  background: var(--ssr-footer) !important;
+  border-color: var(--ssr-footer) !important;
+}
+
+.account-submit-btn:hover {
+  color: #fff !important;
+  background: #312e81 !important;
+  border-color: #312e81 !important;
+}
+
+.account-inline-link {
+  color: var(--ssr-footer);
+  font-weight: 600;
+  text-decoration-color: rgba(30, 27, 75, 0.5);
+}
+
+.account-inline-link:hover {
+  color: #312e81;
+  text-decoration-color: #312e81;
+}
+
+.account-danger-btn {
+  border-radius: 999px;
+  font-weight: 600;
+  color: #fff !important;
+  background: linear-gradient(90deg, #be123c, #e11d48) !important;
+  border: 1px solid rgba(255, 255, 255, 0.55) !important;
+  box-shadow: 0 6px 14px rgba(190, 18, 60, 0.28);
+}
+
+.account-danger-btn:hover {
+  color: #fff !important;
+  background: linear-gradient(90deg, #9f1239, #be123c) !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
 }
 
 /* Home */
