@@ -1,3 +1,137 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@model IReadOnlyList<Review>
+
+@{
+    ViewData["Title"] = "Home";
 }
+
+<div class="home-page">
+    @* --- 1. Hero Section --- *@
+    <section class="hero-section text-center py-5 mb-5 bg-dark text-white rounded-4 shadow">
+        <div class="container py-4">
+            <h1 class="display-4 fw-bold mb-3">Your Next Favorite Movie Awaits</h1>
+            <p class="lead mb-4 text-white-50">Join our community of cinephiles to share thoughts, discover hidden gems, and track your cinematic journey.</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a asp-controller="Movie" asp-action="Index" class="btn btn-primary btn-lg px-4 rounded-pill shadow-sm">Browse Movies</a>
+                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-outline-light btn-lg px-4 rounded-pill">Join Community</a>
+            </div>
+        </div>
+    </section>
+
+    @* --- 2. Stats / Features Bar --- *@
+    <section class="row g-4 mb-5 text-center">
+        <div class="col-6 col-md-3">
+            <div class="p-3 border-bottom border-primary border-3 bg-light rounded-top shadow-sm">
+                <h3 class="h2 mb-0 fw-bold">12k+</h3>
+                <p class="text-muted small text-uppercase mb-0 fw-semibold">Reviews</p>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="p-3 border-bottom border-success border-3 bg-light rounded-top shadow-sm">
+                <h3 class="h2 mb-0 fw-bold">5k+</h3>
+                <p class="text-muted small text-uppercase mb-0 fw-semibold">Movies</p>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="p-3 border-bottom border-warning border-3 bg-light rounded-top shadow-sm">
+                <h3 class="h2 mb-0 fw-bold">2k+</h3>
+                <p class="text-muted small text-uppercase mb-0 fw-semibold">Critics</p>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="p-3 border-bottom border-info border-3 bg-light rounded-top shadow-sm">
+                <h3 class="h2 mb-0 fw-bold">100%</h3>
+                <p class="text-muted small text-uppercase mb-0 fw-semibold">Cinephile</p>
+            </div>
+        </div>
+    </section>
+
+    @* --- 3. Latest Reviews Content --- *@
+    @if (Model == null || Model.Count == 0)
+    {
+        <div class="text-center py-5 my-5 border rounded-4 bg-light">
+            <div class="mb-3">
+                <i class="bi bi-chat-left-quote fs-1 text-muted"></i>
+            </div>
+            <h3 class="h5 text-dark">No reviews yet</h3>
+            <p class="text-muted">Be the first to share your thoughts on a movie!</p>
+            <a asp-controller="Movie" asp-action="Index" class="btn btn-outline-primary mt-2">Find a Movie</a>
+        </div>
+    }
+    else
+    {
+        <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-4">
+            <div>
+                <h2 class="h3 mb-1 fw-bold">Community Activity</h2>
+                <p class="text-muted small mb-0">What people are watching right now</p>
+            </div>
+            <span class="badge rounded-pill bg-secondary px-3 py-2">
+                @Model.Count @(Model.Count == 1 ? "review" : "reviews")
+            </span>
+        </div>
+
+        <div class="row g-4">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var review = Model[i];
+                string accentClass = (i % 3) switch
+                {
+                    0 => "review-card--accent-a",
+                    1 => "review-card--accent-b",
+                    _ => "review-card--accent-c"
+                };
+
+                <div class="col-md-6 col-xl-4">
+                    <article class="card review-card h-100 border-0 shadow-sm rounded-4 overflow-hidden position-relative @accentClass">
+                        <div class="review-card__img-wrap" style="height: 200px; overflow: hidden; background: #222;">
+                            @if (!string.IsNullOrEmpty(review.MoviePosterPath))
+                            {
+                                <img src="https://image.tmdb.org/t/p/w342@(review.MoviePosterPath)" 
+                                     class="w-100 h-100 object-fit-cover" 
+                                     alt="@review.MovieTitle Poster" 
+                                     loading="lazy" />
+                            }
+                            else
+                            {
+                                <div class="d-flex align-items-center justify-content-center h-100 text-white-50 small">No poster</div>
+                            }
+                        </div>
+                        <div class="card-body d-flex flex-column p-4">
+                            <h3 class="h5 card-title mb-2">
+                                <a class="stretched-link text-decoration-none text-dark fw-bold" asp-controller="Movie" asp-action="Details" asp-route-id="@review.MovieApiId">@review.MovieTitle</a>
+                            </h3>
+                            <p class="small text-muted mb-3">
+                                <span class="fw-semibold text-body">@review.User?.Username</span>
+                                <span class="text-muted">· @review.CreatedAt.ToString("MMM d, yyyy")</span>
+                            </p>
+                            <p class="card-text review-card__excerpt text-body-secondary flex-grow-1 mb-3">
+                                @(review.ReviewText?.Length > 150 ? review.ReviewText.Substring(0, 147) + "..." : review.ReviewText)
+                            </p>
+                            <div class="d-flex align-items-center justify-content-between mt-auto pt-3 border-top">
+                                <div class="review-stars text-warning" title="@review.Rating out of 5">
+                                    @for (var j = 0; j < 5; j++)
+                                    {
+                                        <span class="@(j < (int)review.Rating ? "" : "text-muted")" aria-hidden="true">★</span>
+                                    }
+                                </div>
+                                <span class="small fw-bold text-muted">@review.Rating/5</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            }
+        </div>
+    }
+
+    @* --- 4. Call to Action Footer (Search Integrated) --- *@
+    <section class="mt-5 p-5 bg-primary text-white rounded-4 text-center shadow">
+        <h2 class="fw-bold">Ready to share your opinion?</h2>
+        <p class="mb-4 opacity-75">Search for a movie and let the world know what you think.</p>
+        <div class="d-flex justify-content-center mx-auto" style="max-width: 500px;">
+            @* Points to Movie Controller's Index action with parameter 'q' *@
+            <form asp-controller="Movie" asp-action="Index" method="get" class="input-group input-group-lg">
+                <input type="text" name="q" class="form-control border-0 shadow-none" placeholder="Search for a movie..." aria-label="Search for a movie">
+                <button class="btn btn-dark px-4 shadow-sm" type="submit">Search</button>
+            </form>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,68 @@
+@model Movie?
+
+@{
+    ViewData["Title"] = Model?.Title ?? "Movie";
+    var apiKeyMissing = ViewBag.ApiKeyMissing as bool? == true;
+}
+
+@if (apiKeyMissing)
+{
+    <div class="alert alert-warning">
+        TMDb API key is not configured. Add <code>TMDb:ApiKey</code> to use movie details.
+    </div>
+}
+else if (Model == null)
+{
+    <p class="text-muted">Movie could not be loaded.</p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            @if (!string.IsNullOrEmpty(Model.PosterPath))
+            {
+                <img src="https://image.tmdb.org/t/p/w500@(Model.PosterPath)" class="img-fluid rounded shadow" alt="@Model.Title" />
+            }
+            else
+            {
+                <div class="bg-light text-muted d-flex align-items-center justify-content-center rounded" style="min-height: 400px;">No poster</div>
+            }
+        </div>
+        <div class="col-md-8">
+            <h1 class="display-6">@Model.Title</h1>
+            @if (!string.IsNullOrEmpty(Model.Tagline))
+            {
+                <p class="lead text-muted fst-italic">@Model.Tagline</p>
+            }
+            <p class="mb-2">
+                @if (!string.IsNullOrEmpty(Model.ReleaseDate))
+                {
+                    <span class="me-3"><strong>Released:</strong> @Model.ReleaseDate</span>
+                }
+                @if (Model.Runtime > 0)
+                {
+                    <span class="me-3"><strong>Runtime:</strong> @Model.Runtime min</span>
+                }
+                @if (Model.VoteAverage > 0)
+                {
+                    <span><strong>TMDb score:</strong> @Model.VoteAverage.ToString("0.0") / 10</span>
+                }
+            </p>
+            @if (!string.IsNullOrEmpty(Model.Status))
+            {
+                <p><strong>Status:</strong> @Model.Status</p>
+            }
+            @if (Model.Genres.Count > 0)
+            {
+                <p>
+                    @foreach (var g in Model.Genres)
+                    {
+                        <span class="badge bg-secondary me-1">@g</span>
+                    }
+                </p>
+            }
+            <h2 class="h5 mt-4">Overview</h2>
+            <p>@Model.Overview</p>
+        </div>
+    </div>
+}

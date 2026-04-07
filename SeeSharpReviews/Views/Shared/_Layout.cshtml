@@ -4,50 +4,56 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - SeeSharpReviews</title>
+    <link rel="icon" type="image/svg+xml" href="~/images/logo-ssr.svg" asp-append-version="true" />
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SeeSharpReviews.styles.css" asp-append-version="true" />
 </head>
-<body>
+<body class="site-body">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SeeSharpReviews</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+        <nav class="navbar navbar-expand-sm navbar-dark site-navbar border-0 shadow-sm mb-0">
+            <div class="container-fluid px-3 px-lg-4">
+                <partial name="_BrandLogo" />
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <!-- Home and Movies links removed to let other team members handle them -->
+                    <ul class="navbar-nav flex-grow-1 ms-lg-4 pt-2 pt-sm-0">
+                        <li class="nav-item">
+                            <a class="nav-link site-nav-link" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link site-nav-link" asp-controller="Movie" asp-action="Index">Movies</a>
+                        </li>
                     </ul>
-                    <ul class="navbar-nav">
+                    <ul class="navbar-nav gap-sm-1">
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
                             if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-danger fw-bold" asp-area="" asp-controller="Admin" asp-action="Dashboard">Admin Panel</a>
+                                    <a class="nav-link site-nav-link site-nav-link--accent" asp-area="" asp-controller="Admin" asp-action="Dashboard">Admin</a>
                                 </li>
                             }
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Profile">
-                                    @User.Identity.Name 
-                                    <span class="text-muted" style="font-size: 0.85em;">(@(User.IsInRole("Admin") ? "Admin" : "User"))</span>
+                                <a class="nav-link site-nav-link" asp-area="" asp-controller="Account" asp-action="Profile">
+                                    @User.Identity.Name
+                                    <span class="opacity-75 small">(@(User.IsInRole("Admin") ? "Admin" : "User"))</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
+                                <a class="nav-link site-nav-link" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+                                <a class="nav-link site-nav-link" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
+                                <a class="btn btn-sm btn-light fw-semibold rounded-pill px-3 ms-sm-1 mt-2 mt-sm-0 align-self-center" asp-area="" asp-controller="Account" asp-action="Register">Sign up</a>
                             </li>
                         }
                     </ul>
@@ -55,15 +61,33 @@
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container py-4 py-lg-5 flex-grow-1">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - SeeSharpReviews
+    <footer class="site-footer mt-auto border-0">
+        <div class="site-footer__strip"></div>
+        <div class="container py-4">
+            <div class="row align-items-center g-3">
+                <div class="col-md-6 d-flex align-items-center gap-2">
+                    <img src="~/images/logo-ssr.svg" width="36" height="36" alt="" class="flex-shrink-0 opacity-90" />
+                    <div>
+                        <div class="fw-semibold text-white">SeeSharpReviews</div>
+                        <small class="text-white-50">Movie reviews from the community</small>
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <small class="text-white-50 d-block">
+                        Movie data from
+                        <a class="link-light link-underline-opacity-25 link-underline-opacity-75-hover" href="https://www.themoviedb.org/" rel="noopener" target="_blank">The Movie Database (TMDb)</a>.
+                    </small>
+                    <small class="text-white-50 d-block mt-1">
+                        This product uses the TMDb API but is not endorsed or certified by TMDb.
+                    </small>
+                </div>
+            </div>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
