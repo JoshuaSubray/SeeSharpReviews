@@ -1,5 +1,4 @@
 # SeeSharpReviews
-# SeeSharpReviews
 To run:  
 cd .\SeeSharpReviews\
 dotnet restore  
