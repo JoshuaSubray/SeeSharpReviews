@@ -1,0 +1,74 @@
+@model IEnumerable<SeeSharpReviews.Models.Review>
+
+@{
+    ViewData["Title"] = "Movie Reviews";
+}
+
+<div class="container mt-5">
+    <h1 class="mb-4">Community Reviews</h1>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading">No reviews yet</h4>
+            <p>Be the first to review this movie!</p>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a href="@Url.Action("Create", "Review", new { movieApiId = ViewBag.MovieApiId })" 
+                   class="btn btn-primary">Write a Review</a>
+            }
+            else
+            {
+                <p>Please <a href="@Url.Action("Login", "Account")">log in</a> to write a review.</p>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-8">
+                @foreach (var review in Model)
+                {
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="card-title">
+                                        <strong>@review.User.Username</strong>
+                                    </h5>
+                                    <div class="mb-2">
+                                        @for (int i = 0; i < review.Rating; i++)
+                                        {
+                                            <span class="text-warning">&#9733;</span>
+                                        }
+                                        <span class="text-muted ms-2">@review.Rating.ToString("0.0") / 5.0</span>
+                                    </div>
+                                    <p class="text-muted small">
+                                        Posted on @review.CreatedAt.ToString("MMMM dd, yyyy")
+                                        @if (review.UpdatedAt != review.CreatedAt)
+                                        {
+                                            <span>(Edited)</span>
+                                        }
+                                    </p>
+                                </div>
+                                @if (User.Identity?.IsAuthenticated == true && 
+                                     int.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var userIdClaim) &&
+                                     userIdClaim == review.UserId)
+                                {
+                                    <div class="btn-group" role="group">
+                                        <a href="@Url.Action("Edit", "Review", new { id = review.ReviewId })" 
+                                           class="btn btn-sm btn-outline-primary">Edit</a>
+                                        <a href="@Url.Action("Delete", "Review", new { id = review.ReviewId })" 
+                                           class="btn btn-sm btn-outline-danger">Delete</a>
+                                    </div>
+                                }
+                            </div>
+
+                            <p class="card-text mt-3">@review.ReviewText</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

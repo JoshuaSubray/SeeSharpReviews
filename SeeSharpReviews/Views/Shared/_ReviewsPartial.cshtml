@@ -1,0 +1,65 @@
+@model IEnumerable<SeeSharpReviews.Models.Review>
+
+@{
+    var movieApiId = ViewBag.MovieApiId;
+    var currentUserId = 0;
+    if (User.Identity?.IsAuthenticated == true)
+    {
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+        if (userIdClaim != null)
+        {
+            int.TryParse(userIdClaim.Value, out currentUserId);
+        }
+    }
+}
+
+@if (Model == null || !Model.Any())
+{
+    <p class="text-muted">No reviews yet. <strong>Be the first to review!</strong></p>
+}
+else
+{
+    @foreach (var review in Model)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <h5 class="card-title mb-1">@review.User.Username</h5>
+                        <div class="mb-2">
+                            @for (int i = 0; i < review.Rating; i++)
+                            {
+                                <span class="text-warning">&#9733;</span>
+                            }
+                            <span class="text-muted ms-2">@review.Rating / 5</span>
+                        </div>
+                        <small class="text-muted">
+                            @review.CreatedAt.ToString("MMMM dd, yyyy")
+                            @if (review.UpdatedAt != review.CreatedAt)
+                            {
+                                <span>(Edited)</span>
+                            }
+                        </small>
+                    </div>
+                    @if (currentUserId == review.UserId)
+                    {
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a href="@Url.Action("Edit", "Review", new { id = review.ReviewId })" 
+                               class="btn btn-outline-primary">Edit</a>
+                            <a href="@Url.Action("Delete", "Review", new { id = review.ReviewId })" 
+                               class="btn btn-outline-danger">Delete</a>
+                        </div>
+                    }
+                </div>
+                <p class="card-text">@review.ReviewText</p>
+            </div>
+        </div>
+    }
+
+    @if (Model.Count() >= 5)
+    {
+        <a href="@Url.Action("ByMovie", "Review", new { movieApiId = movieApiId })" class="btn btn-outline-secondary">
+            View All Reviews
+        </a>
+    }
+}

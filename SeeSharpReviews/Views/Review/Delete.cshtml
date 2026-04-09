@@ -1,0 +1,47 @@
+@model SeeSharpReviews.Models.Review
+
+@{
+    ViewData["Title"] = "Delete Review";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">Delete Review</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning" role="alert">
+                        <strong>Are you sure?</strong> This action cannot be undone.
+                    </div>
+
+                    <div class="mb-3">
+                        <p><strong>Movie:</strong> @Model.MovieTitle</p>
+                        <p><strong>Your Rating:</strong> 
+                            @for (int i = 0; i < Model.Rating; i++)
+                            {
+                                <span>&#9733;</span>
+                            }
+                        </p>
+                        <p><strong>Review:</strong></p>
+                        <blockquote class="blockquote">
+                            <p>@Model.ReviewText</p>
+                        </blockquote>
+                    </div>
+
+                    <form method="post" asp-action="DeleteConfirmed" asp-route-id="@Model.ReviewId">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-danger w-100">Yes, Delete Review</button>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="javascript:history.back()" class="btn btn-secondary w-100">Cancel</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

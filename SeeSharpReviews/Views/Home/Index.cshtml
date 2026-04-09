@@ -62,7 +62,7 @@
         <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-4">
             <div>
                 <h2 class="h3 mb-1 fw-bold">Community Activity</h2>
-                <p class="text-muted small mb-0">What people are watching right now</p>
+                <p class="text-muted small mb-0">What people are watching right now.</p>
             </div>
             <span class="badge rounded-pill bg-secondary px-3 py-2">
                 @Model.Count @(Model.Count == 1 ? "review" : "reviews")
@@ -110,7 +110,7 @@
                                 <div class="review-stars text-warning" title="@review.Rating out of 5">
                                     @for (var j = 0; j < 5; j++)
                                     {
-                                        <span class="@(j < (int)review.Rating ? "" : "text-muted")" aria-hidden="true">★</span>
+                                        <span class="@(j < (int)review.Rating ? "" : "text-muted")" aria-hidden="true">&#9733;</span>
                                     }
                                 </div>
                                 <span class="small fw-bold text-muted">@review.Rating/5</span>

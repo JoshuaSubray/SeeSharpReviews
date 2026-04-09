@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SeeSharpReviews.Data;
 using SeeSharpReviews.Models;
 using SeeSharpReviews.Services;
 
@@ -7,10 +9,12 @@ namespace SeeSharpReviews.Controllers;
 public class MovieController : Controller
 {
     private readonly ITmdbApiService _tmdb;
+    private readonly AppDbContext _context;
 
-    public MovieController(ITmdbApiService tmdb)
+    public MovieController(ITmdbApiService tmdb, AppDbContext context)
     {
         _tmdb = tmdb;
+        _context = context;
     }
 
     [HttpGet]
@@ -56,6 +60,16 @@ public class MovieController : Controller
         var movie = await _tmdb.GetMovieDetailsAsync(id, cancellationToken);
         if (movie == null)
             return NotFound();
+
+        var reviews = await _context.Reviews
+            .Where(r => r.MovieApiId == id.ToString())
+            .Include(r => r.User)
+            .OrderByDescending(r => r.CreatedAt)
+            .Take(5)
+            .ToListAsync(cancellationToken);
+
+        ViewBag.MovieReviews = reviews;
+        ViewBag.MovieApiId = id;
 
         return View(movie);
     }
