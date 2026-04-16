@@ -24,6 +24,20 @@ public class ReviewController : Controller
         return userIdClaim != null ? int.Parse(userIdClaim.Value) : 0;
     }
 
+    // Check if the current user is an admin.
+    private async Task<bool> IsCurrentUserAdminAsync()
+    {
+        var userId = GetCurrentUserId();
+        if (userId == 0)
+            return false;
+
+        var user = await _context.Users
+            .Include(u => u.Role)
+            .FirstOrDefaultAsync(u => u.UserId == userId);
+
+        return user?.Role?.RoleName == "Admin";
+    }
+
     // GET: /Review/Create?...
     [HttpGet]
     public IActionResult Create(string movieApiId, string movieTitle, string moviePosterPath)
@@ -141,8 +155,9 @@ public class ReviewController : Controller
             return NotFound();
 
         var userId = GetCurrentUserId();
-        if (review.UserId != userId)
-            return Forbid(); // only the user who created the review can edit it.
+        var isAdmin = await IsCurrentUserAdminAsync();
+        if (review.UserId != userId && !isAdmin)
+            return Forbid(); // only the review owner or admin can edit it.
 
         return View(review);
     }
@@ -162,7 +177,8 @@ public class ReviewController : Controller
             return NotFound();
 
         var userId = GetCurrentUserId();
-        if (existingReview.UserId != userId)
+        var isAdmin = await IsCurrentUserAdminAsync();
+        if (existingReview.UserId != userId && !isAdmin)
             return Forbid();
 
         // remove validation errors for fields that aren't in the form.
@@ -218,7 +234,8 @@ public class ReviewController : Controller
             return NotFound();
 
         var userId = GetCurrentUserId();
-        if (review.UserId != userId)
+        var isAdmin = await IsCurrentUserAdminAsync();
+        if (review.UserId != userId && !isAdmin)
             return Forbid();
 
         return View(review);
@@ -236,7 +253,8 @@ public class ReviewController : Controller
             return NotFound();
 
         var userId = GetCurrentUserId();
-        if (review.UserId != userId)
+        var isAdmin = await IsCurrentUserAdminAsync();
+        if (review.UserId != userId && !isAdmin)
             return Forbid();
 
         var movieApiId = review.MovieApiId;

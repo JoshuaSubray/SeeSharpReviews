@@ -41,7 +41,7 @@ else
                             }
                         </small>
                     </div>
-                    @if (currentUserId == review.UserId)
+                    @if (currentUserId == review.UserId || User.IsInRole("Admin"))
                     {
                         <div class="btn-group btn-group-sm" role="group">
                             <a href="@Url.Action("Edit", "Review", new { id = review.ReviewId })" 

@@ -17,8 +17,8 @@ if (string.IsNullOrWhiteSpace(connectionString))
 }
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseOracle(connectionString));
-    // options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    // options.UseOracle(connectionString));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddAuthentication("Cookies")
     .AddCookie("Cookies", options =>

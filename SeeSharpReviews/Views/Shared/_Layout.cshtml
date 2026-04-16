@@ -39,8 +39,7 @@
                             }
                             <li class="nav-item">
                                 <a class="btn btn-sm site-auth-btn site-auth-btn--ghost fw-semibold rounded-pill px-3 mt-2 mt-sm-0 align-self-center" asp-area="" asp-controller="Account" asp-action="Profile">
-                                    @User.Identity.Name
-                                    <span class="opacity-75 small">(@(User.IsInRole("Admin") ? "Admin" : "User"))</span>
+                                    @User.Identity.Name&nbsp;<span class="opacity-75 small">(@(User.IsInRole("Admin") ? "Admin" : "User"))</span>
                                 </a>
                             </li>
                             <li class="nav-item">
