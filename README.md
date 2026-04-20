@@ -116,6 +116,15 @@ dotnet watch run
 - `/Account/Profile` -> Profile
 - `/Admin/Dashboard` -> Admin-only dashboard
 
+## Deployment
+
+> **Note:** Online deployment is not available.
+>
+> The project uses an **Oracle database hosted locally inside a virtual machine**,
+> which is not reachable from public hosting platforms (Azure, Render, Railway, etc.).
+> Because of this, the application is intended to be **run and demoed locally**
+> using the setup steps above.
+
 ## Screenshots
 
 ### Home Page
