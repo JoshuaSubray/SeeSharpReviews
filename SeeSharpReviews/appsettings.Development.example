@@ -1,0 +1,18 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "ConnectionStrings": {
+    "DefaultConnection": "User Id=SYSTEM;Password=oracle;Data Source=localhost:1521/pdb1"
+  },
+  "TMDb": {
+    "ApiKey": "918598351a55dfd4f38c3ef3e6fc18bb",
+    "BaseUrl": "https://api.themoviedb.org/3"
+  },
+  "ReviewsApi": {
+    "BaseUrl": "http://localhost:5067/"
+  }
+}

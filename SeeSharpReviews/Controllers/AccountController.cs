@@ -5,16 +5,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SeeSharpReviews.Data;
 using SeeSharpReviews.Models;
+using SeeSharpReviews.Services;
 
 namespace SeeSharpReviews.Controllers;
 
 public class AccountController : Controller
 {
     private readonly AppDbContext _context;
+    private readonly IReviewsApiClient _reviewsApi;
 
-    public AccountController(AppDbContext context)
+    public AccountController(AppDbContext context, IReviewsApiClient reviewsApi)
     {
         _context = context;
+        _reviewsApi = reviewsApi;
     }
 
     // GET: /Account/Register
@@ -133,7 +136,6 @@ public class AccountController : Controller
         {
             // Viewing another user's profile
             user = await _context.Users
-                .Include(u => u.Reviews)
                 .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.UserId == id.Value);
         }
@@ -146,7 +148,6 @@ public class AccountController : Controller
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
             user = await _context.Users
-                .Include(u => u.Reviews)
                 .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.UserId == userId);
         }
@@ -154,11 +155,15 @@ public class AccountController : Controller
         if (user == null)
             return NotFound();
 
+        // Reviews for this profile are served by the Reviews microservice
+        // (SeeSharpReviews.Api) over HTTP instead of being loaded via EF.
+        var apiReviews = await _reviewsApi.GetReviewsByUserAsync(user.UserId);
+
         var model = new ProfileViewModel
         {
             Username = user.Username,
             RoleName = user.Role.RoleName,
-            Reviews = user.Reviews.OrderByDescending(r => r.CreatedAt).ToList()
+            Reviews = apiReviews.ToList()
         };
 
         return View(model);

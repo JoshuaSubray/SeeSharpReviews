@@ -37,6 +37,16 @@ builder.Services.AddHttpClient("TMDb", client =>
     client.BaseAddress = new Uri(baseUrl);
 });
 
+// Typed HTTP client for the Reviews microservice (SeeSharpReviews.Api).
+builder.Services.AddHttpClient<IReviewsApiClient, ReviewsApiClient>(client =>
+{
+    var baseUrl = builder.Configuration["ReviewsApi:BaseUrl"] ?? "http://localhost:5067/";
+    if (!baseUrl.EndsWith('/'))
+        baseUrl += "/";
+    client.BaseAddress = new Uri(baseUrl);
+    client.Timeout = TimeSpan.FromSeconds(5);
+});
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

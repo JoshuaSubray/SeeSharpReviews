@@ -1,0 +1,6 @@
+@SeeSharpReviews.Api_HostAddress = http://localhost:5067
+
+GET {{SeeSharpReviews.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

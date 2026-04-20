@@ -1,12 +1,14 @@
 # SeeSharpReviews
 
-SeeSharpReviews is a movie review web application built with ASP.NET Core MVC.  
+SeeSharpReviews is a movie review web application built with ASP.NET Core MVC.
 Users can search movies from TMDb, view details, create reviews, and manage their account with role-based access.
+
+The solution is split into two apps: the main **MVC application** and a small **Reviews Web API microservice** that serves review data over HTTP.
 
 ## Project Overview
 
 - **Course:** CPAN 369 (Web Programming)
-- **Architecture:** ASP.NET Core MVC + Entity Framework Core
+- **Architecture:** ASP.NET Core MVC + dedicated ASP.NET Core Web API microservice
 - **Authentication:** Cookie authentication (custom Account flow, no ASP.NET Identity)
 - **External API:** TMDb (The Movie Database)
 - **Database:** Oracle (EF Core provider)
@@ -14,7 +16,8 @@ Users can search movies from TMDb, view details, create reviews, and manage thei
 ## Tech Stack
 
 - C# / .NET 9
-- ASP.NET Core MVC (Razor Views)
+- ASP.NET Core MVC (Razor Views) — main app
+- ASP.NET Core Web API — Reviews microservice
 - Entity Framework Core
 - Oracle.EntityFrameworkCore
 - BCrypt.Net-Next
@@ -24,7 +27,7 @@ Users can search movies from TMDb, view details, create reviews, and manage thei
 
 - User registration and login
 - Role-based authorization (`Admin`, `User`)
-- Profile page with user reviews
+- Profile page with user reviews (reviews are fetched from the Reviews microservice)
 - Account deletion flow
 - Admin dashboard for user management
 - Movie search and filtering (title, genre, year)
@@ -44,6 +47,25 @@ Users can search movies from TMDb, view details, create reviews, and manage thei
   - All User permissions
   - Access to admin dashboard and user-management operations
 
+## Microservice: `SeeSharpReviews.Api`
+
+A separate ASP.NET Core Web API project that serves review data over HTTP. The MVC app's **Profile page** consumes this service (via a typed `HttpClient`) instead of loading reviews from the database directly.
+
+### Endpoints
+
+| Method | Route | Description |
+|---|---|---|
+| `GET` | `/api/reviews` | All reviews (newest first) |
+| `GET` | `/api/reviews?take=N` | Latest `N` reviews |
+| `GET` | `/api/reviews/{id}` | A single review by id |
+| `GET` | `/api/reviews/user/{userId}` | All reviews by a specific user (used by the Profile page) |
+
+### Design
+
+- Reuses the MVC project's `AppDbContext` via a `<ProjectReference>` — no duplicated schema.
+- Returns a flat `ReviewDto` (flattens `User.Username`) to avoid EF navigation serialization loops.
+- MVC's `ReviewsApiClient` wraps calls in try/catch so a downed microservice never crashes the Profile page.
+
 ## Project Structure
 
 ```text
@@ -54,33 +76,37 @@ SeeSharpReviews/
     Views/
     Data/
     Services/
+    Migrations/
     wwwroot/
+  SeeSharpReviews.Api/          # Reviews microservice (Web API)
+    Controllers/
+    Models/
+    Program.cs
+  docs/
+    screenshots/
 ```
 
 ## Setup Instructions
 
-### 1) Clone and enter project
+### 1) Clone and enter the project
 
 ```bash
 git clone https://github.com/JoshuaSubray/SeeSharpReviews.git
-cd SeeSharpReviews/SeeSharpReviews
+cd SeeSharpReviews
 ```
 
-### 2) Restore packages
+### 2) Restore packages for both projects
 
 ```bash
-dotnet restore
+dotnet restore SeeSharpReviews/SeeSharpReviews.csproj
+dotnet restore SeeSharpReviews.Api/SeeSharpReviews.Api.csproj
 ```
 
 ### 3) Configure local settings
 
-Create/update `appsettings.Development.json` with:
+You need a dev config for **both** projects. Both files are gitignored.
 
-- `ConnectionStrings:DefaultConnection`
-- `TMDb:ApiKey`
-- `TMDb:BaseUrl` (usually `https://api.themoviedb.org/3/`)
-
-Example:
+#### `SeeSharpReviews/SeeSharpReviews/appsettings.Development.json`
 
 ```json
 {
@@ -90,31 +116,67 @@ Example:
   "TMDb": {
     "ApiKey": "YOUR_TMDB_API_KEY",
     "BaseUrl": "https://api.themoviedb.org/3/"
+  },
+  "ReviewsApi": {
+    "BaseUrl": "http://localhost:5067/"
   }
 }
 ```
 
+#### `SeeSharpReviews.Api/appsettings.Development.json`
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "YOUR_ORACLE_CONNECTION_STRING"
+  }
+}
+```
+
+> The API's `BaseUrl` in the MVC config must match the port the API actually listens on. Check the terminal output when the API starts (`Now listening on: http://localhost:PORT`) and update if needed.
+
 ### 4) Apply database migrations
 
+From the MVC project folder:
+
 ```bash
-dotnet ef migrations add InitialCreate
+cd SeeSharpReviews
 dotnet ef database update
 ```
 
-### 5) Run the app
+### 5) Run both apps (two terminals)
+
+**Terminal 1 — start the microservice:**
 
 ```bash
-dotnet watch run
+dotnet run --project SeeSharpReviews.Api
 ```
+
+**Terminal 2 — start the MVC app:**
+
+```bash
+dotnet run --project SeeSharpReviews/SeeSharpReviews.csproj
+```
+
+The Profile page (`/Account/Profile`) loads review data from the running microservice. If the microservice is stopped, the rest of the MVC app still works — the Profile page's review list will simply be empty (graceful fallback).
 
 ## Default Routes
 
-- `/` -> Home page
-- `/Movie` -> Movie search and filters
-- `/Account/Register` -> Register
-- `/Account/Login` -> Login
-- `/Account/Profile` -> Profile
-- `/Admin/Dashboard` -> Admin-only dashboard
+### MVC app
+
+- `/` → Home page
+- `/Movie` → Movie search and filters
+- `/Account/Register` → Register
+- `/Account/Login` → Login
+- `/Account/Profile` → Profile (reviews fetched from the microservice)
+- `/Admin/Dashboard` → Admin-only dashboard
+
+### Microservice
+
+- `/api/reviews`
+- `/api/reviews?take=N`
+- `/api/reviews/{id}`
+- `/api/reviews/user/{userId}`
 
 ## Deployment
 
@@ -122,7 +184,7 @@ dotnet watch run
 >
 > The project uses an **Oracle database hosted locally inside a virtual machine**,
 > which is not reachable from public hosting platforms (Azure, Render, Railway, etc.).
-> Because of this, the application is intended to be **run and demoed locally**
+> Because of this, both apps are intended to be **run and demoed locally**
 > using the setup steps above.
 
 ## Screenshots
@@ -166,3 +228,7 @@ dotnet watch run
 ### Admin Dashboard
 
 ![Admin dashboard](docs/screenshots/admin-dashboard.png)
+
+### Microservice JSON Response
+
+![Microservice JSON](docs/screenshots/microservice-json.png)
